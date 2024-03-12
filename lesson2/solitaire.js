@@ -1,5 +1,4 @@
-import { getDeck, shuffleDeck } from "./deck.js";
-import readline from 'readline/promises';
+import { getDeck, shuffleTheDeck } from "./deck.js";
 
 /**
  * This is a solitaire game. There are various arrays of cards:
@@ -11,7 +10,7 @@ import readline from 'readline/promises';
  */
 
 function dealTheCards(game) {
-  shuffleDeck(game.deck);
+  shuffleTheDeck(game.deck);
   game.gameOver = false;
   game.suitColumns = {  hearts: [], diamonds: [], clubs: [], spades: [] };
   game.boardColumns = makeBoardColumns(game.deck);
@@ -35,46 +34,6 @@ function makeBoardColumns(deck) {
   return boardColumns;
 }
 
-function showGameState(game) {
-  console.log('');
-  showSuitColumns(game);
-  console.log(`Board cards:`);
-  game.boardColumns.forEach((column, index) => {
-    const columnString = column.map(card => card.faceUp ? getCardString(card) : 'XX').join(', ');
-    console.log(`Column ${index + 1}: ${columnString}`);
-  });
-  showPlayerCards(game.playerCards);
-  showDiscardPile(game.discardPile);
-  console.log(`Game over: ${game.gameOver}`);
-}
-
-function showSuitColumns(game) {
-  console.log(`Suit columns:`);
-  for (const suit in game.suitColumns) {
-    const suitColumn = game.suitColumns[suit];
-    console.log(`${suit}: ${showListOfCards(suitColumn)}`);
-  }
-}
-
-function showListOfCards(cards) {
-  return cards.map(card => getCardString(card)).join(', ');
-}
-
-function showPlayerCards(playerCards) {
-  console.log(`Player cards: ${playerCards.length}`);
-}
-
-function showDiscardPile(discardPile) {
-  const discardStr = (discardPile.length === 0)
-    ? 'No cards'
-    : getCardString(discardPile[discardPile.length - 1]);
-  console.log(`Discard pile: ${discardStr}`);
-}
-
-function getCardString(card) {
-  return `${card.rank.name}${card.suit.symbol}`;
-}
-
 /*
   get the player's move, which can be one of the following:
   q - quit the game
@@ -85,45 +44,33 @@ function getCardString(card) {
   d - draw three cards from the player's cards and place them on the discard pile
   p - pick up the discard pile and add the cards to the player's cards
 */
-async function getPlayerMove(game) {
-  const prompt = 'Enter your move (q, ds, db <toColNum>, bs <fromColNum>, bb <fromColNum> <toColNum>, d, p):';
-  const ifce = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  });
-  const move = await ifce.question(prompt);
-  console.log(`You entered:`, move);
-  if (move === 'q') {
-    game.gameOver = true;
+async function makePlayerMove(game, move) {
+  const { cmd, fromColNum, toColNum } = move;
+  switch (cmd) {
+    case 'quit':
+      game.gameOver = true;
+      break;
+    case 'discardToSuit':
+      moveDiscardToSuitColumn(game);
+      break;
+    case 'discardToBoard':
+      moveDiscardToBoardColumn(game, toColNum);
+      break;
+    case 'boardToSuit':
+      moveBoardCardToSuitColumn(game, fromColNum);
+      break;
+    case 'boardToBoard':
+      moveBoardColumn(game, fromColNum, toColNum);
+      break;
+    case 'drawThree':
+      drawThreeCards(game);
+      break;
+    case 'pickupDiscard':
+      pickupDiscardPile(game);
+      break;
+    default:
+      console.log('Invalid move');
   }
-  else if (move === 'ds') {
-    moveDiscardToSuitColumn(game);
-  }
-  else if (move.startsWith('db')) {
-    const toColNum = parseInt(move.substring(3));
-    moveDiscardToBoardColumn(game, toColNum);
-  }
-  else if (move.startsWith('bs')) {
-    const fromColNum = parseInt(move.substring(3));
-    moveBoardCardToSuitColumn(game, fromColNum);
-  }
-  else if (move.startsWith('bb')) {
-    const [fromColumnStr, toColumnStr] = move.substring(3).split(' ');
-    const fromColNum = parseInt(fromColumnStr);
-    const toColNum = parseInt(toColumnStr);
-    moveBoardColumn(game, fromColNum, toColNum);
-  }
-  else if (move === 'd') {
-    drawThreeCards(game);
-  }
-  else if (move === 'p') {
-    pickupDiscardPile(game);
-  }
-  else {
-    console.log('Invalid move');
-  }
-  ifce.close();
-  return game.gameOver;
 }
 
 function moveDiscardToSuitColumn(game) {
@@ -219,16 +166,13 @@ function cardCanGoOnSuitColumn(suitColumn, card) {
     || suitColumn.length > 0 && suitColumn[suitColumn.length - 1].rank.value === card.rank.value - 1;
 }
 
-async function playOneGame() {
-  const game = {
-    deck: getDeck()
-  };
+export async function playOneGame(ui) {
+  const game = { deck: getDeck() };
   dealTheCards(game);
   while (!game.gameOver) {
-    showGameState(game);
-    game.gameOver = await getPlayerMove(game);
+    ui.showGameState(game);
+    const move = await ui.getPlayerMove(game);
+    makePlayerMove(game, move);
   }
-  showGameState(game);
+  ui.showGameState(game);
 }
-
-playOneGame();

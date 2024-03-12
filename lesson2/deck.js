@@ -31,7 +31,7 @@ export function getDeck() {
   return deck;
 }
 
-export function shuffleDeck(deck) {
+export function shuffleTheDeck(deck) {
   for (let i = 0; i < deck.length; i++) {
     const j = Math.floor(Math.random() * deck.length);
     deck[i].faceUp = false;
