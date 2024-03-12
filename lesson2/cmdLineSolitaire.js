@@ -59,6 +59,15 @@ ui.getPlayerMove = async (game) => {
 
 ui.showGameState = (game) => {
   console.log('');
+  if (game.gameOver) {
+    if (game.playerWon) {
+      console.log('Congratulations! You won!');
+    }
+    else {
+      console.log('Sorry! You lost.');
+    }
+    return;
+  }
   showSuitColumns(game);
   console.log(`Board cards:`);
   game.boardColumns.forEach((column, index) => {

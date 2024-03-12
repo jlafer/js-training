@@ -83,6 +83,7 @@ function moveDiscardToSuitColumn(game) {
   }
   if (allSuitColumnsFull(game)) {
     game.gameOver = true;
+    game.playerWon = true;
   }
   return game.gameOver;
 }
@@ -101,6 +102,7 @@ function moveBoardCardToSuitColumn(game, fromColNum) {
   }
   if (allSuitColumnsFull(game)) {
     game.gameOver = true;
+    game.playerWon = true;
   }
   return game.gameOver;
 }
@@ -167,7 +169,7 @@ function cardCanGoOnSuitColumn(suitColumn, card) {
 }
 
 export async function playOneGame(ui) {
-  const game = { deck: getDeck() };
+  const game = { deck: getDeck(), playerWon: false };
   dealTheCards(game);
   while (!game.gameOver) {
     ui.showGameState(game);
