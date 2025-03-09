@@ -7,11 +7,22 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Launch Hearts",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/hearts/v2/main.mjs",
+      "console": "integratedTerminal",
+      "runtimeExecutable": "/Users/lafer16mac/.nvm/versions/node/v18.18.0/bin/node"
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Launch Solitaire",
       "skipFiles": [
         "<node_internals>/**"
       ],
-      "program": "${workspaceFolder}/lesson2/solitaire.js",
+      "program": "${workspaceFolder}/solitaire/cmdLineSolitaire.js",
       "console": "integratedTerminal"
     }
   ]

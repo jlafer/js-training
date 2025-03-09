@@ -1,4 +1,4 @@
-import { getDeck, shuffleTheDeck } from "./deck.js";
+import { getShuffledDeck } from "./deck.js";
 
 /**
  * This is a solitaire game. There are various arrays of cards:
@@ -8,15 +8,6 @@ import { getDeck, shuffleTheDeck } from "./deck.js";
  * - boardColumns: the starting cards that are dealt to the board; the top card of each column is at the end of each array
  * - suitColumns: the cards that are moved to the suit columns; the top card of each column is at the end of each array
  */
-
-function dealTheCards(game) {
-  shuffleTheDeck(game.deck);
-  game.gameOver = false;
-  game.suitColumns = {  hearts: [], diamonds: [], clubs: [], spades: [] };
-  game.boardColumns = makeBoardColumns(game.deck);
-  game.playerCards = game.deck;
-  game.discardPile = [];
-}
 
 function makeBoardColumns(deck) {
   const boardColumns = [[], [], [], [], [], [], []];
@@ -32,6 +23,26 @@ function makeBoardColumns(deck) {
     }
   }
   return boardColumns;
+}
+
+function makeBoardColumnsClear(deck) {
+  const boardColumns = makeEmptyCardColumns();
+  let boardColumn = 0;
+  let firstColumnToFill = 0;
+  for (let i = 0; i < 28; i++) {
+    deck[0].faceUp = (boardColumn === firstColumnToFill);
+    boardColumns[boardColumn].push(deck.shift());
+    boardColumn++;
+    if (boardColumn === 7) {
+      firstColumnToFill++;
+      boardColumn = firstColumnToFill;
+    }
+  }
+  return boardColumns;
+}
+
+function makeEmptyCardColumns() {
+  return [[], [], [], [], [], [], []];
 }
 
 /*
@@ -168,9 +179,18 @@ function cardCanGoOnSuitColumn(suitColumn, card) {
     || suitColumn.length > 0 && suitColumn[suitColumn.length - 1].rank.value === card.rank.value - 1;
 }
 
-export async function playOneGame(ui) {
-  const game = { deck: getDeck(), playerWon: false };
+function initializeTheGame() {
+  const game = { gameOver: false, playerWon: false };
+  game.deck = getShuffledDeck();
+  game.suitColumns = { hearts: [], diamonds: [], clubs: [], spades: [] };
+  game.boardColumns = makeBoardColumns(game.deck);
+  game.playerCards = game.deck;
+  game.discardPile = [];
   dealTheCards(game);
+  return game;
+}
+export async function playOneGame(ui) {
+  const game = initializeTheGame();
   while (!game.gameOver) {
     ui.showGameState(game);
     const move = await ui.getPlayerMove(game);

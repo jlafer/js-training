@@ -1,0 +1,23 @@
+Exercises
+- rewrite chooseLowestCard(suit, player) and chooseHighestCard(suit, player)
+  to use a new helper function, chooseEndCard(suit, player, end),
+  where 'end' equals 'lowest' or 'highest'
+
+Enhancements to Hearts
+v2- Determine the winner of each trick.
+v2- Record the winner of each trick and the latest trick.
+v2- Winner of trick leads the next trick
+v2- At the end of the game, show the scores.
+    - calculate the score for each trick
+    - calculate the total score for each player
+- On a Heart trick,
+    if you can go avoid taking it, play the highest that avoids it
+    if not, play the highest heart you have
+- Don't lead Hearts unless you have low ones
+- On a Spade trick, don't play queen or higher unless you're last
+- Play high cards early before heart-sluffing starts
+
+Let Player1 be user
+- show user his hand, updating it after each card is played
+- show accumulating cards in trick
+- for player1, get input from terminal

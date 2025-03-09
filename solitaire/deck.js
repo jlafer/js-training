@@ -1,8 +1,8 @@
 const suits = [
   { name: 'hearts', symbol: '♥', color: 'red' },
-  { name: 'diamonds', symbol: '♦', color: 'red'},
-  { name: 'clubs', symbol: '♣', color: 'black'},
-  { name: 'spades', symbol: '♠', color: 'black'}
+  { name: 'diamonds', symbol: '♦', color: 'red' },
+  { name: 'clubs', symbol: '♣', color: 'black' },
+  { name: 'spades', symbol: '♠', color: 'black' }
 ];
 
 const ranks = [
@@ -25,8 +25,11 @@ export function getDeck() {
   const deck = [];
   suits.forEach(suit => {
     ranks.forEach(rank => {
-      deck.push({ suit, rank, faceUp: false});
+      deck.push({ suit, rank, faceUp: false });
     });
+  });
+  deck.forEach(card => {
+    console.log(`${card.rank.name} of ${card.suit.name}`);
   });
   return deck;
 }
@@ -39,4 +42,18 @@ export function shuffleTheDeck(deck) {
     deck[i] = deck[j];
     deck[j] = temp;
   }
+}
+
+export function getShuffledDeck() {
+  const deck = getDeck();
+  const shuffled = [];
+  const deckLength = deck.length;
+  for (let i = 0; i < deckLength; i++) {
+    const j = Math.floor(Math.random() * deck.length);
+    const card = { ...deck[j] };
+    card.faceUp = false;
+    shuffled.push(card);
+    deck.splice(j, 1);
+  }
+  return shuffled;
 }
