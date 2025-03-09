@@ -11,11 +11,34 @@ export function playTheGame(players) {
       trick.cards.push(card);
       playerIdx = (playerIdx + 1) % playerCount;
     }
+    trick.score = getTrickScore(trick);
     trick.winner = getTrickWinner(trick);
     lead = trick.winner;
     tricks.push(trick);
   }
   return tricks;
+}
+
+export function scoreTheGame(tricks, players) {
+  const playerCount = players.length;
+  const scores = [];
+  for (let i = 0; i < playerCount; i++) {
+    scores[i] = 0;
+  }
+  tricks.forEach((trick) => {
+    const winner = trick.winner;
+    scores[winner] += trick.score;
+  });
+  players.forEach((player, idx) => {
+    player.score = scores[idx];
+  });
+}
+
+export function showScores(players) {
+  console.log('\nScores:');
+  players.forEach((player, idx) => {
+    console.log(`Player ${idx} Score: ${player.score}`);
+  });
 }
 
 function getTrickWinner(trick) {
@@ -33,6 +56,19 @@ function getTrickWinner(trick) {
     playerIdx = (playerIdx + 1) % cards.length;
   });
   return winner;
+}
+
+function getTrickScore(trick) {
+  const cards = trick.cards;
+  let score = 0;
+  cards.forEach((card) => {
+    if (card.suit.name === 'hearts') {
+      score += 1;
+    } else if (card.suit.name === 'spades' && card.rank.name === 'Q') {
+      score += 13;
+    }
+  });
+  return score;
 }
 
 function chooseCard(trick, hand) {
