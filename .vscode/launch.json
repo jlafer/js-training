@@ -2,6 +2,7 @@
   // Use IntelliSense to learn about possible attributes.
   // Hover to view descriptions of existing attributes.
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  //"runtimeExecutable": "/Users/lafer16mac/.nvm/versions/node/v18.18.0/bin/node"
   "version": "0.2.0",
   "configurations": [
     {
@@ -13,7 +14,6 @@
       ],
       "program": "${workspaceFolder}/hearts/v2/main.mjs",
       "console": "integratedTerminal",
-      "runtimeExecutable": "/Users/lafer16mac/.nvm/versions/node/v18.18.0/bin/node"
     },
     {
       "type": "node",
